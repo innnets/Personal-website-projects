@@ -12,114 +12,71 @@ ARG NEXT_PUBLIC_SITE_URL
 ARG UPSTASH_REDIS_REST_TOKEN
 ARG UPSTASH_REDIS_REST_URL
 
-FROM node:18 AS base
+FROM node:18-slim AS base
 
 # 安装依赖
 FROM base AS deps
 WORKDIR /app
 
-# 使用 apt-get 而不是 apk (因为我们使用的是 node:18 而不是 alpine 版本)
+# 安装系统依赖
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    # 添加 sharp 所需的系统依赖
     build-essential \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-COPY package*.json ./
+# 安装 pnpm
+RUN npm install -g pnpm
 
-# 清理 npm 缓存并安装依赖
-RUN npm cache clean --force && \
-    npm install --no-optional --legacy-peer-deps && \
-    # 确保 sanity 相关包被正确安装
-    npm install --save sanity-plugin-media@^2.2.5 @sanity/vision@^3.33.0 && \
-    # 验证安装
-    npm ls sanity-plugin-media || true
+# 复制项目文件
+COPY package.json pnpm-lock.yaml* ./
+
+# 安装依赖
+RUN pnpm install --frozen-lockfile
 
 # 构建应用
 FROM base AS builder
 WORKDIR /app
 
-# 重新声明此阶段需要的ARG变量
-ARG CLERK_SECRET_KEY
-ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-ARG DATABASE_URL
-ARG NEXT_PUBLIC_SANITY_DATASET
-ARG NEXT_PUBLIC_SANITY_PROJECT_ID
-ARG NEXT_PUBLIC_SANITY_USE_CDN
-ARG RESEND_API_KEY
-ARG SITE_NOTIFICATION_EMAIL_TO
-ARG NEXT_PUBLIC_SITE_EMAIL_FROM
-ARG NEXT_PUBLIC_SITE_URL
-ARG UPSTASH_REDIS_REST_TOKEN
-ARG UPSTASH_REDIS_REST_URL
+# 安装构建所需的系统依赖
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# 为构建过程设置环境变量
-ENV CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-ENV DATABASE_URL=${DATABASE_URL}
-ENV NEXT_PUBLIC_SANITY_DATASET=${NEXT_PUBLIC_SANITY_DATASET}
-ENV NEXT_PUBLIC_SANITY_PROJECT_ID=${NEXT_PUBLIC_SANITY_PROJECT_ID}
-ENV NEXT_PUBLIC_SANITY_USE_CDN=${NEXT_PUBLIC_SANITY_USE_CDN}
-ENV RESEND_API_KEY=${RESEND_API_KEY}
-ENV SITE_NOTIFICATION_EMAIL_TO=${SITE_NOTIFICATION_EMAIL_TO}
-ENV NEXT_PUBLIC_SITE_EMAIL_FROM=${NEXT_PUBLIC_SITE_EMAIL_FROM}
-ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
-ENV UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
-ENV UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+# 安装 pnpm
+RUN npm install -g pnpm
+
+# 设置环境变量
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
+# 复制依赖
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# 增加内存限制，避免构建过程中内存不足
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-
-# 添加更多的调试信息
-RUN echo "Node version: $(node -v)" && \
-    echo "NPM version: $(npm -v)" && \
-    # 验证关键依赖
-    npm ls sanity-plugin-media || true && \
-    # 运行构建
-    npm run build || (cat .next/error.log && exit 1)
+# 构建应用
+RUN pnpm build
 
 # 生产环境
 FROM base AS runner
 WORKDIR /app
 
-# 重新声明此阶段需要的ARG变量
-ARG CLERK_SECRET_KEY
-ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-ARG DATABASE_URL
-ARG NEXT_PUBLIC_SANITY_DATASET
-ARG NEXT_PUBLIC_SANITY_PROJECT_ID
-ARG NEXT_PUBLIC_SANITY_USE_CDN
-ARG RESEND_API_KEY
-ARG SITE_NOTIFICATION_EMAIL_TO
-ARG NEXT_PUBLIC_SITE_EMAIL_FROM
-ARG NEXT_PUBLIC_SITE_URL
-ARG UPSTASH_REDIS_REST_TOKEN
-ARG UPSTASH_REDIS_REST_URL
+# 创建用户和组
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs nextjs
 
-# 为运行时设置环境变量
-ENV CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-ENV DATABASE_URL=${DATABASE_URL}
-ENV NEXT_PUBLIC_SANITY_DATASET=${NEXT_PUBLIC_SANITY_DATASET}
-ENV NEXT_PUBLIC_SANITY_PROJECT_ID=${NEXT_PUBLIC_SANITY_PROJECT_ID}
-ENV NEXT_PUBLIC_SANITY_USE_CDN=${NEXT_PUBLIC_SANITY_USE_CDN}
-ENV RESEND_API_KEY=${RESEND_API_KEY}
-ENV SITE_NOTIFICATION_EMAIL_TO=${SITE_NOTIFICATION_EMAIL_TO}
-ENV NEXT_PUBLIC_SITE_EMAIL_FROM=${NEXT_PUBLIC_SITE_EMAIL_FROM}
-ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
-ENV UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
-ENV UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+# 设置环境变量
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
 
-# 在 Debian 基础镜像中创建用户和组
-RUN groupadd --system --gid 1001 nodejs
-RUN useradd --system --uid 1001 --gid nodejs nextjs
-
+# 复制构建产物
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
@@ -127,7 +84,5 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
-
-ENV PORT 3000
 
 CMD ["node", "server.js"] 
