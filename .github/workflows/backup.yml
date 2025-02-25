@@ -36,11 +36,20 @@ jobs:
           # 安装 PostgreSQL 客户端
           sudo apt-get update && sudo apt-get install -y postgresql-client
           
+          # 解析数据库连接信息
+          DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^:]*\).*/\1/p')
+          DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\).*/\1/p')
+          DB_NAME=$(echo $DATABASE_URL | sed -n 's/.*\/\([^?]*\).*/\1/p')
+          DB_PASSWORD=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\).*/\1/p')
+          
           # 备份数据库
-          PGPASSWORD=${DATABASE_URL#*:*:*:*:} pg_dump \
-            -h ${DATABASE_URL#*@} \
-            -U ${DATABASE_URL#*//} \
-            ${DATABASE_URL##*/} > ${{ env.BACKUP_NAME }}/database.sql
+          PGPASSWORD="${DB_PASSWORD}" pg_dump \
+            -h "${DB_HOST}" \
+            -U "${DB_USER}" \
+            -d "${DB_NAME}" \
+            --no-owner \
+            --no-acl \
+            > ${{ env.BACKUP_NAME }}/database.sql
 
       - name: 创建备份压缩包
         run: tar -czf ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
