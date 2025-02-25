@@ -29,10 +29,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY package.json package-lock.json* ./
 
-# 安装所有依赖，包括类型定义
-RUN npm ci && \
-    npm install --save-dev @types/node @types/react @types/react-dom && \
-    npm install --legacy-peer-deps styled-components @splinetool/runtime sharp
+# 分步骤安装依赖，避免冲突
+RUN npm install --frozen-lockfile && \
+    npm install --save-dev @types/node@^20.11.26 @types/react@18.2.65 @types/react-dom@^18.2.21 && \
+    npm install --legacy-peer-deps @splinetool/runtime sharp
 
 # 构建应用
 FROM base AS builder
