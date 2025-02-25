@@ -25,20 +25,39 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
+          # 添加 PostgreSQL 官方源
+          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          
+          # 更新包列表并安装 PostgreSQL 17 客户端
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+          
+          # 解析数据库连接信息
+          DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^/]*\).*/\1/p')
+          DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\).*/\1/p')
+          DB_NAME=$(echo $DATABASE_URL | sed -n 's/.*\/\([^?]*\).*/\1/p')
+          DB_PASSWORD=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\).*/\1/p')
+          
+          echo "创建当前数据备份..."
           
           # 备份当前数据
-          PGPASSWORD=${DATABASE_URL#*:*:*:*:} pg_dump \
-            -h ${DATABASE_URL#*@} \
-            -U ${DATABASE_URL#*//} \
-            ${DATABASE_URL##*/} > current_backup.sql
+          PGPASSWORD="${DB_PASSWORD}" pg_dump \
+            -h "${DB_HOST}" \
+            -U "${DB_USER}" \
+            -d "${DB_NAME}" \
+            --no-owner \
+            --no-acl \
+            --clean \
+            --if-exists \
+            > current_backup.sql
           
           # 保存当前备份
           tar -czf current_backup.tar.gz current_backup.sql
 
       - name: 上传当前数据备份
         if: ${{ github.event.inputs.create_backup == 'true' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # 升级到 v4
         with:
           name: pre_restore_backup
           path: current_backup.tar.gz
@@ -53,11 +72,31 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
+          # 添加 PostgreSQL 官方源（如果还没安装）
+          if ! command -v psql &> /dev/null; then
+            sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+            wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client-17
+          fi
+          
+          # 解析数据库连接信息
+          DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^/]*\).*/\1/p')
+          DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\).*/\1/p')
+          DB_NAME=$(echo $DATABASE_URL | sed -n 's/.*\/\([^?]*\).*/\1/p')
+          DB_PASSWORD=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\).*/\1/p')
+          
+          echo "开始恢复数据库..."
+          echo "Host: $DB_HOST"
+          echo "User: $DB_USER"
+          echo "Database: $DB_NAME"
+          
           # 恢复数据
-          PGPASSWORD=${DATABASE_URL#*:*:*:*:} psql \
-            -h ${DATABASE_URL#*@} \
-            -U ${DATABASE_URL#*//} \
-            ${DATABASE_URL##*/} < */database.sql
+          PGPASSWORD="${DB_PASSWORD}" psql \
+            -h "${DB_HOST}" \
+            -U "${DB_USER}" \
+            -d "${DB_NAME}" \
+            -f */database.sql
 
       - name: 验证恢复
         run: |
