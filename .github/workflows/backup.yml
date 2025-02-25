@@ -1,0 +1,67 @@
+name: 自动备份
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # 每周日凌晨执行
+  workflow_dispatch:      # 允许手动触发
+
+env:
+  BACKUP_NAME: backup_${{ github.sha }}
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 创建备份目录
+        run: mkdir -p ${{ env.BACKUP_NAME }}/.github/workflows
+
+      - name: 备份配置文件
+        run: |
+          # 复制核心配置文件
+          cp Dockerfile next.config.js middleware.ts env.mjs .env.example \
+             .eslintrc.cjs .gitignore ${{ env.BACKUP_NAME }}/
+          
+          # 复制 GitHub Actions 配置
+          cp .github/workflows/docker-build.yml ${{ env.BACKUP_NAME }}/.github/workflows/
+
+      - name: 备份数据库
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # 安装 PostgreSQL 客户端
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          
+          # 备份数据库
+          PGPASSWORD=${DATABASE_URL#*:*:*:*:} pg_dump \
+            -h ${DATABASE_URL#*@} \
+            -U ${DATABASE_URL#*//} \
+            ${DATABASE_URL##*/} > ${{ env.BACKUP_NAME }}/database.sql
+
+      - name: 创建备份压缩包
+        run: tar -czf ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
+
+      - name: 上传备份到 GitHub Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: backup
+          path: ${{ env.BACKUP_NAME }}.tar.gz
+          retention-days: 30  # 保留30天
+
+      - name: 创建备份发布
+        if: github.event_name == 'workflow_dispatch'  # 只在手动触发时创建发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.BACKUP_NAME }}.tar.gz
+          name: Backup ${{ github.sha }}
+          tag_name: backup-${{ github.sha }}
+          body: |
+            自动备份 - ${{ github.event.head_commit.message }}
+            
+            包含文件：
+            - 配置文件 (Dockerfile, next.config.js, middleware.ts 等)
+            - 数据库备份
+            - GitHub Actions 配置 

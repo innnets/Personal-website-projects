@@ -1,0 +1,34 @@
+name: 恢复备份
+
+on:
+  workflow_dispatch:
+    inputs:
+      backup_url:
+        description: '备份文件 URL'
+        required: true
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 下载备份
+        run: |
+          wget ${{ github.event.inputs.backup_url }} -O backup.tar.gz
+          tar -xzf backup.tar.gz
+
+      - name: 恢复数据库
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          
+          PGPASSWORD=${DATABASE_URL#*:*:*:*:} psql \
+            -h ${DATABASE_URL#*@} \
+            -U ${DATABASE_URL#*//} \
+            ${DATABASE_URL##*/} < */database.sql
+
+      - name: 验证恢复
+        run: |
+          # 添加验证步骤
+          echo "恢复完成，请检查数据完整性" 

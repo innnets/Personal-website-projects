@@ -46,3 +46,8 @@ static/
 
 .react-email/
 /.idea
+
+# 添加备份相关忽略
+backup_*/
+*.tar.gz
+*.sql
