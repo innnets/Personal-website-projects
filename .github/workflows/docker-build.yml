@@ -48,6 +48,19 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
+            NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            NEXT_PUBLIC_SANITY_DATASET=${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+            NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+            NEXT_PUBLIC_SANITY_USE_CDN=${{ secrets.NEXT_PUBLIC_SANITY_USE_CDN }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            SITE_NOTIFICATION_EMAIL_TO=${{ secrets.SITE_NOTIFICATION_EMAIL_TO }}
+            NEXT_PUBLIC_SITE_EMAIL_FROM=${{ secrets.NEXT_PUBLIC_SITE_EMAIL_FROM }}
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            UPSTASH_REDIS_REST_TOKEN=${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+            UPSTASH_REDIS_REST_URL=${{ secrets.UPSTASH_REDIS_REST_URL }}
 
       - name: 触发 Dokploy 部署
         run: |
