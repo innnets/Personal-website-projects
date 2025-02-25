@@ -71,7 +71,8 @@ COPY . .
 # 增加内存限制，避免构建过程中内存不足
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# 使用更详细的构建命令，以便查看错误
+# 先运行 lint 修复，然后再构建
+RUN npm run lint -- --fix || true
 RUN npm run build || (cat /root/.npm/_logs/*-debug.log && exit 1)
 
 # 生产环境
