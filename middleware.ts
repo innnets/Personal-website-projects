@@ -9,7 +9,7 @@ import { getIP } from '~/lib/ip'
 import { redis } from '~/lib/redis'
 
 export const config = {
-  matcher: ['/((?!_next|studio|.*\\..*).*)'],
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 }
 
 async function beforeAuthMiddleware(req: NextRequest) {
@@ -67,5 +67,10 @@ export default authMiddleware({
     '/rss',
     '/feed',
     '/ama',
+    '/api/webhook',
   ],
+  ignoredRoutes: [
+    '/((?!api|trpc))(_next.*|.+.[w]+$)',
+    '/admin'
+  ]
 })

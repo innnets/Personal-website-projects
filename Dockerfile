@@ -23,12 +23,14 @@ RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
+    # 添加 sharp 所需的系统依赖
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json* ./
 # 安装所有依赖，包括 styled-components 和 @splinetool/runtime
 RUN npm install --legacy-peer-deps
-RUN npm install --legacy-peer-deps styled-components @splinetool/runtime
+RUN npm install --legacy-peer-deps styled-components @splinetool/runtime sharp
 
 # 构建应用
 FROM base AS builder
