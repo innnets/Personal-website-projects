@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   parser: '@typescript-eslint/parser',
   extends: [
     'next/core-web-vitals',
@@ -16,10 +17,17 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn'
   },
   parserOptions: {
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
     ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true
+    }
+  },
+  settings: {
+    next: {
+      rootDir: ['./']
     }
   }
 } 
