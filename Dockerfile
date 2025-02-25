@@ -48,7 +48,11 @@ ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 ENV UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
 ENV UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
 
-RUN npm run build
+# 增加内存限制，避免 Node.js 内存不足
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# 使用更详细的构建命令，以便查看错误
+RUN npm run build || (cat /root/.npm/_logs/*-debug.log && exit 1)
 
 # 生产环境
 FROM base AS runner
