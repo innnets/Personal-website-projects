@@ -27,12 +27,11 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY package.json package-lock.json* ./
+COPY package*.json ./
 
-# 分步骤安装依赖，避免冲突
-RUN npm install --frozen-lockfile && \
-    npm install --save-dev @types/node@^20.11.26 @types/react@18.2.65 @types/react-dom@^18.2.21 && \
-    npm install --legacy-peer-deps @splinetool/runtime sharp
+# 清理 npm 缓存并安装依赖
+RUN npm cache clean --force && \
+    npm install --production=false --legacy-peer-deps
 
 # 构建应用
 FROM base AS builder
