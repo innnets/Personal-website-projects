@@ -1,8 +1,9 @@
+import React from 'react'
+
 import { auth } from '@clerk/nextjs'
-import { redirect } from 'next/navigation'
 import { Card, Grid, Metric, Text, Title } from '@tremor/react'
 import { sql } from 'drizzle-orm'
-import React from 'react'
+import { redirect } from 'next/navigation'
 
 import { db } from '~/db'
 
@@ -33,7 +34,6 @@ export default async function AdminPage() {
       <Grid numItemsMd={2} numItemsLg={3} className="mt-6 gap-6">
         <Card>
           <Text>总评论</Text>
-
           {count && 'comments' in count && <Metric>{count.comments}</Metric>}
         </Card>
         <Card>
