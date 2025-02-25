@@ -1,8 +1,8 @@
+import { auth } from '@clerk/nextjs'
+import { redirect } from 'next/navigation'
 import { Card, Grid, Metric, Text, Title } from '@tremor/react'
 import { sql } from 'drizzle-orm'
 import React from 'react'
-import { auth } from '@clerk/nextjs'
-import { redirect } from 'next/navigation'
 
 import { db } from '~/db'
 
