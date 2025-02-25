@@ -33,8 +33,13 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          # 安装 PostgreSQL 客户端
-          sudo apt-get update && sudo apt-get install -y postgresql-client
+          # 添加 PostgreSQL 官方源
+          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          
+          # 更新包列表并安装 PostgreSQL 17 客户端
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
           
           # 解析数据库连接信息
           DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^/]*\).*/\1/p')
