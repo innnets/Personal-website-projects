@@ -12,39 +12,27 @@ ARG NEXT_PUBLIC_SITE_URL
 ARG UPSTASH_REDIS_REST_TOKEN
 ARG UPSTASH_REDIS_REST_URL
 
-FROM node:18 AS base
+FROM node:18-alpine AS base
 
 # 安装依赖
 FROM base AS deps
 WORKDIR /app
 
 # 安装系统依赖
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    build-essential \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache python3 make g++ git
 
-# 复制 package.json 和 lockfile
-COPY package*.json ./
+# 复制项目文件
+COPY . .
 
-# 清理 npm 缓存并安装依赖
-RUN npm cache clean --force && \
-    npm install --legacy-peer-deps && \
-    # 单独安装 Sanity 相关包
-    npm install --save @sanity/vision@^3.33.0 sanity-plugin-media@^2.2.5 && \
-    # 安装类型定义
-    npm install --save-dev @types/node@^20.11.26 @types/react@18.2.65 @types/react-dom@^18.2.21
+# 一次性安装所有依赖
+RUN npm install --force
 
 # 构建应用
 FROM base AS builder
 WORKDIR /app
 
-# 复制依赖
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# 复制所有文件
+COPY --from=deps /app ./
 
 # 设置环境变量
 ENV NODE_ENV=production
@@ -59,8 +47,8 @@ FROM base AS runner
 WORKDIR /app
 
 # 创建用户和组
-RUN groupadd --system --gid 1001 nodejs && \
-    useradd --system --uid 1001 --gid nodejs nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 # 设置环境变量
 ENV NODE_ENV=production
