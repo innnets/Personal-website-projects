@@ -21,23 +21,6 @@ Cali 的个人博客网站 [https://cali.so/](https://cali.so/) 的源代码。
 - [React Email](https://react.email)
 - [Resend](https://resend.com/)
 
-### 教程
-
-想部署成自己的网站？可以查看 Cali 的[官方教程](https://cali.so/blog/guide-for-cloning-my-site)
-
-### 本地开发
-
-```bash
-# 安装依赖
-pnpm install
-
-# 启动开发服务器
-pnpm dev
-
-# 构建
-pnpm build
-```
-
 通过 [Vercel](https://vercel.com/) 一键部署。
 
 ### 变更日志
