@@ -10,9 +10,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 获取所有历史记录
+
+      - name: Create backup
+        run: |
+          timestamp=$(date +%Y%m%d_%H%M%S)
+          tar -czf backup_${timestamp}.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: your-artifact-name
-          path: path/to/artifact 
+          name: repository-backup-${{ github.run_number }}
+          path: backup_*.tar.gz
+          retention-days: 30  # 保留30天 
