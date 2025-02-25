@@ -1,88 +1,115 @@
-name: 自动备份
+name: Backup
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # 每周日凌晨执行
-  workflow_dispatch:      # 允许手动触发
-
-env:
-  BACKUP_NAME: backup_${{ github.sha }}
+    - cron: '0 0 * * *'  # 每天运行
+  workflow_dispatch:      # 手动触发
 
 jobs:
   backup:
     runs-on: ubuntu-latest
+    
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    
     steps:
-      - name: 检出代码
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 获取完整历史记录
 
-      - name: 创建备份目录
-        run: mkdir -p ${{ env.BACKUP_NAME }}/.github/workflows
-
-      - name: 备份配置文件
+      - name: Create backup directories
         run: |
-          # 复制核心配置文件
-          cp Dockerfile next.config.js middleware.ts env.mjs .env.example \
-             .eslintrc.cjs .gitignore ${{ env.BACKUP_NAME }}/
-          
-          # 复制 GitHub Actions 配置
-          cp .github/workflows/docker-build.yml ${{ env.BACKUP_NAME }}/.github/workflows/
+          mkdir -p backups/config
+          mkdir -p backups/database
+          mkdir -p backups/actions
+          mkdir -p backups/sanity
+          mkdir -p backups/public
 
-      - name: 备份数据库
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Backup configuration files
         run: |
-          # 添加 PostgreSQL 官方源
-          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-          
-          # 更新包列表并安装 PostgreSQL 17 客户端
+          # 配置文件备份
+          cp .env* backups/config/ || true
+          cp *.config.* backups/config/ || true
+          cp tsconfig.json backups/config/ || true
+          cp package.json backups/config/ || true
+          cp pnpm-lock.yaml backups/config/ || true
+          cp .eslintrc.* backups/config/ || true
+          cp prettier.config.* backups/config/ || true
+
+      - name: Backup GitHub Actions
+        run: |
+          # GitHub Actions 配置备份
+          cp -r .github/workflows/* backups/actions/
+
+      - name: Install PostgreSQL client
+        run: |
           sudo apt-get update
-          sudo apt-get install -y postgresql-client-17
-          
-          # 解析数据库连接信息
-          DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^/]*\).*/\1/p')
-          DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\).*/\1/p')
-          DB_NAME=$(echo $DATABASE_URL | sed -n 's/.*\/\([^?]*\).*/\1/p')
-          DB_PASSWORD=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\).*/\1/p')
-          
-          echo "Host: $DB_HOST"
-          echo "User: $DB_USER"
-          echo "Database: $DB_NAME"
-          
-          # 备份数据库
-          PGPASSWORD="${DB_PASSWORD}" pg_dump \
-            -h "${DB_HOST}" \
-            -U "${DB_USER}" \
-            -d "${DB_NAME}" \
-            --no-owner \
-            --no-acl \
-            --clean \
-            --if-exists \
-            > ${{ env.BACKUP_NAME }}/database.sql
+          sudo apt-get install -y postgresql-client-14
 
-      - name: 创建备份压缩包
-        run: tar -czf ${{ env.BACKUP_NAME }}.tar.gz ${{ env.BACKUP_NAME }}
+      - name: Parse database connection
+        id: db-parse
+        run: |
+          # 解析数据库连接字符串
+          if [[ "$DATABASE_URL" =~ ^postgres://([^:]+):([^@]+)@([^:]+):([^/]+)/(.+)$ ]]; then
+            echo "DB_USER=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+            echo "DB_PASS=${BASH_REMATCH[2]}" >> $GITHUB_ENV
+            echo "DB_HOST=${BASH_REMATCH[3]}" >> $GITHUB_ENV
+            echo "DB_PORT=${BASH_REMATCH[4]}" >> $GITHUB_ENV
+            echo "DB_NAME=${BASH_REMATCH[5]}" >> $GITHUB_ENV
+          fi
 
-      - name: 上传备份到 GitHub Artifacts
-        uses: actions/upload-artifact@v4  # 升级到 v4
+      - name: Backup database
+        run: |
+          # 数据库备份
+          PGPASSWORD=$DB_PASS pg_dump \
+            -h $DB_HOST \
+            -U $DB_USER \
+            -p $DB_PORT \
+            -d $DB_NAME \
+            -F c \
+            -f backups/database/backup.dump
+
+      - name: Backup Sanity content
+        env:
+          SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
+        run: |
+          # 如果有 Sanity CLI，备份 Sanity 内容
+          if [ -n "$SANITY_TOKEN" ]; then
+            npx @sanity/cli dataset export production backups/sanity/content.tar.gz
+          fi
+
+      - name: Backup public files
+        run: |
+          # 备份公共文件
+          cp -r public/* backups/public/ || true
+
+      - name: Create compressed backup
+        run: |
+          tar -czf backup.tar.gz backups/
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
         with:
           name: backup
-          path: ${{ env.BACKUP_NAME }}.tar.gz
-          retention-days: 30  # 保留30天
+          path: backup.tar.gz
+          retention-days: 30
 
-      - name: 创建备份发布
+      - name: Create Release
         if: github.event_name == 'workflow_dispatch'  # 只在手动触发时创建发布
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.BACKUP_NAME }}.tar.gz
+          files: backup.tar.gz
           name: Backup ${{ github.sha }}
           tag_name: backup-${{ github.sha }}
           body: |
-            自动备份 - ${{ github.event.head_commit.message }}
+            自动备份创建于 ${{ github.event.timestamp }}
             
-            包含文件：
-            - 配置文件 (Dockerfile, next.config.js, middleware.ts 等)
+            包含:
+            - 配置文件
             - 数据库备份
-            - GitHub Actions 配置 
+            - GitHub Actions 配置
+            - Sanity 内容
+            - 公共文件
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
