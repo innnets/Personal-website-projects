@@ -71,6 +71,9 @@ COPY . .
 # 增加内存限制，避免构建过程中内存不足
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
+# 安装 ESLint 依赖
+RUN npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-simple-import-sort
+
 # 使用更详细的构建命令，以便查看错误
 RUN npm run build || (cat /root/.npm/_logs/*-debug.log && exit 1)
 
