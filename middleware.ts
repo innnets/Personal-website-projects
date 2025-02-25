@@ -71,6 +71,5 @@ export default authMiddleware({
   ],
   ignoredRoutes: [
     '/((?!api|trpc))(_next.*|.+.[w]+$)',
-    '/admin'
   ]
 })

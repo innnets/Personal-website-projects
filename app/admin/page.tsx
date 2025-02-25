@@ -1,10 +1,18 @@
 import { Card, Grid, Metric, Text, Title } from '@tremor/react'
 import { sql } from 'drizzle-orm'
 import React from 'react'
+import { auth } from '@clerk/nextjs'
+import { redirect } from 'next/navigation'
 
 import { db } from '~/db'
 
 export default async function AdminPage() {
+  const { userId } = auth()
+  
+  if (!userId) {
+    redirect('/sign-in')
+  }
+
   const {
     rows: [count],
   } = await db.execute<{

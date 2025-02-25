@@ -70,23 +70,25 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider localization={zhCN}>
-      <html
-        lang="zh-CN"
-        className={`${sansFont.variable} m-0 h-full p-0 font-sans antialiased`}
-        suppressHydrationWarning
-      >
-        <body className="flex h-full flex-col">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
+    <ClerkProvider>
+      <ClerkProvider localization={zhCN}>
+        <html
+          lang="zh-CN"
+          className={`${sansFont.variable} m-0 h-full p-0 font-sans antialiased`}
+          suppressHydrationWarning
+        >
+          <body className="flex h-full flex-col">
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </body>
+        </html>
+      </ClerkProvider>
     </ClerkProvider>
   )
 }
