@@ -1,10 +1,13 @@
-FROM node:18-alpine AS base
+FROM node:18 AS base
 
 # 安装依赖
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
+
+# 添加必要的构建工具
+RUN apk add --no-cache libc6-compat python3 make g++
 
 # 构建应用
 FROM base AS builder
