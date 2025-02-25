@@ -8,15 +8,6 @@ import countries from '~/lib/countries.json'
 import { getIP } from '~/lib/ip'
 import { redis } from '~/lib/redis'
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      EDGE_CONFIG: string | undefined
-      VERCEL_ENV: 'development' | 'preview' | 'production'
-    }
-  }
-}
-
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 }
@@ -65,20 +56,20 @@ export default authMiddleware({
   beforeAuth: beforeAuthMiddleware,
   publicRoutes: [
     '/',
-    '/api/(.*)',
-    '/blog/(.*)',
-    '/guestbook',
+    '/studio(.*)',
+    '/api(.*)',
+    '/blog(.*)',
+    '/confirm(.*)',
     '/projects',
-    '/uses',
-    '/feed.xml',
-    '/sitemap.xml',
-    '/robots.txt',
-    '/_vercel/speed-insights/vitals'
+    '/guestbook',
+    '/newsletters(.*)',
+    '/about',
+    '/rss',
+    '/feed',
+    '/ama',
+    '/api/webhook',
   ],
   ignoredRoutes: [
-    '/api/webhook',
-    '/_next/static/(.*)',
-    '/favicon.ico',
-    '/site.webmanifest'
+    '/((?!api|trpc))(_next.*|.+.[w]+$)',
   ]
 })
