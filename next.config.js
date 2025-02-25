@@ -2,11 +2,21 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    // 确保图片优化功能正常工作
-    domains: [
-      // 添加您的图片域名
-      'innnets.me',
-      // ... 其他域名
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'innnets.me',
+      },
+      // 如果您还有其他域名，按照相同格式添加
+      {
+        protocol: 'https',
+        hostname: '*.innnets.me',  // 支持所有子域名
+      },
+      // Sanity 图片域名（如果需要）
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+      },
     ],
   },
   // 其他配置...
