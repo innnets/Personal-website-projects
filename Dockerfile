@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 COPY package.json package-lock.json* ./
 # 安装所有依赖，包括 styled-components 和 @splinetool/runtime
 RUN npm install --legacy-peer-deps
-RUN npm install --legacy-peer-deps @splinetool/runtime
+RUN npm install --legacy-peer-deps styled-components @splinetool/runtime
 
 # 构建应用
 FROM base AS builder
