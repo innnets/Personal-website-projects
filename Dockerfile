@@ -3,11 +3,16 @@ FROM node:18 AS base
 # 安装依赖
 FROM base AS deps
 WORKDIR /app
+
+# 使用 apt-get 而不是 apk (因为我们使用的是 node:18 而不是 alpine 版本)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY package.json package-lock.json* ./
 RUN npm ci
-
-# 添加必要的构建工具
-RUN apk add --no-cache libc6-compat python3 make g++
 
 # 构建应用
 FROM base AS builder
@@ -79,8 +84,9 @@ ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 ENV UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
 ENV UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# 在 Debian 基础镜像中创建用户和组
+RUN groupadd --system --gid 1001 nodejs
+RUN useradd --system --uid 1001 --gid nodejs nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
