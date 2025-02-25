@@ -31,7 +31,11 @@ COPY package*.json ./
 
 # 清理 npm 缓存并安装依赖
 RUN npm cache clean --force && \
-    npm install --production=false --legacy-peer-deps
+    npm install --no-optional --legacy-peer-deps && \
+    # 确保 sanity 相关包被正确安装
+    npm install --save sanity-plugin-media@^2.2.5 @sanity/vision@^3.33.0 && \
+    # 验证安装
+    npm ls sanity-plugin-media || true
 
 # 构建应用
 FROM base AS builder
@@ -72,9 +76,13 @@ COPY . .
 # 增加内存限制，避免构建过程中内存不足
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# 先运行 lint 修复，然后再构建
-RUN npm run lint -- --fix || true
-RUN npm run build || (cat /root/.npm/_logs/*-debug.log && exit 1)
+# 添加更多的调试信息
+RUN echo "Node version: $(node -v)" && \
+    echo "NPM version: $(npm -v)" && \
+    # 验证关键依赖
+    npm ls sanity-plugin-media || true && \
+    # 运行构建
+    npm run build || (cat .next/error.log && exit 1)
 
 # 生产环境
 FROM base AS runner
