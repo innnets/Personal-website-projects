@@ -12,7 +12,7 @@ ARG NEXT_PUBLIC_SITE_URL
 ARG UPSTASH_REDIS_REST_TOKEN
 ARG UPSTASH_REDIS_REST_URL
 
-FROM node:18-slim AS base
+FROM node:18 AS base
 
 # 安装依赖
 FROM base AS deps
@@ -27,41 +27,32 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装 pnpm
-RUN npm install -g pnpm
+# 复制 package.json 和 lockfile
+COPY package*.json ./
 
-# 复制项目文件
-COPY package.json pnpm-lock.yaml* ./
-
-# 安装依赖
-RUN pnpm install --frozen-lockfile
+# 清理 npm 缓存并安装依赖
+RUN npm cache clean --force && \
+    npm install --legacy-peer-deps && \
+    # 单独安装 Sanity 相关包
+    npm install --save @sanity/vision@^3.33.0 sanity-plugin-media@^2.2.5 && \
+    # 安装类型定义
+    npm install --save-dev @types/node@^20.11.26 @types/react@18.2.65 @types/react-dom@^18.2.21
 
 # 构建应用
 FROM base AS builder
 WORKDIR /app
 
-# 安装构建所需的系统依赖
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    build-essential \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# 安装 pnpm
-RUN npm install -g pnpm
-
-# 设置环境变量
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-
 # 复制依赖
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# 设置环境变量
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # 构建应用
-RUN pnpm build
+RUN npm run build
 
 # 生产环境
 FROM base AS runner
