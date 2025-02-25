@@ -12,7 +12,9 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
-    "start": "next start"
+    "start": "next start",
+    "type-check": "tsc --noEmit",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.9",

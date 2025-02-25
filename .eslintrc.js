@@ -27,7 +27,7 @@ module.exports = {
   },
   settings: {
     next: {
-      rootDir: ['./']
+      rootDir: ['.']
     }
   }
 } 

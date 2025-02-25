@@ -28,9 +28,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json* ./
-# 安装所有依赖，包括 styled-components 和 @splinetool/runtime
-RUN npm install --legacy-peer-deps
-RUN npm install --legacy-peer-deps styled-components @splinetool/runtime sharp
+
+# 安装所有依赖，包括类型定义
+RUN npm install --legacy-peer-deps && \
+    npm install --save-dev @types/node @types/react @types/react-dom && \
+    npm install --legacy-peer-deps styled-components @splinetool/runtime sharp
 
 # 构建应用
 FROM base AS builder
