@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps styled-components
+# 安装所有依赖，包括 styled-components 和 @splinetool/runtime
+RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps @splinetool/runtime
 
 # 构建应用
 FROM base AS builder
@@ -48,7 +50,7 @@ ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 ENV UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
 ENV UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
 
-# 增加内存限制，避免 Node.js 内存不足
+# 增加内存限制，避免构建过程中内存不足
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # 使用更详细的构建命令，以便查看错误
