@@ -12,43 +12,54 @@ ARG NEXT_PUBLIC_SITE_URL
 ARG UPSTASH_REDIS_REST_TOKEN
 ARG UPSTASH_REDIS_REST_URL
 
-FROM node:18-alpine AS base
+FROM node:18 AS base
 
 # 安装依赖
 FROM base AS deps
 WORKDIR /app
 
 # 安装系统依赖
-RUN apk add --no-cache python3 make g++ git
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# 复制项目文件
-COPY . .
+# 复制 package.json
+COPY package.json package-lock.json* ./
 
-# 一次性安装所有依赖
-RUN npm install --force
+# 安装依赖
+RUN npm install --legacy-peer-deps
 
 # 构建应用
 FROM base AS builder
 WORKDIR /app
 
-# 复制所有文件
-COPY --from=deps /app ./
+# 复制依赖
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
 # 设置环境变量
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
+# 设置 Sanity 环境变量
+ENV NEXT_PUBLIC_SANITY_PROJECT_ID=${NEXT_PUBLIC_SANITY_PROJECT_ID}
+ENV NEXT_PUBLIC_SANITY_DATASET=${NEXT_PUBLIC_SANITY_DATASET}
+
 # 构建应用
-RUN npm run build
+RUN NODE_ENV=production npm run build
 
 # 生产环境
 FROM base AS runner
 WORKDIR /app
 
 # 创建用户和组
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs nextjs
 
 # 设置环境变量
 ENV NODE_ENV=production
