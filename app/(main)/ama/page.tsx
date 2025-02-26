@@ -1,16 +1,16 @@
-import React from 'react'
-
-import { Card } from '@tremor/react'
-import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Balancer from 'react-wrap-balancer'
 
-import { CommentForm } from '~/components/comments/CommentForm'
-import { CommentList } from '~/components/comments/CommentList'
+import { RichLink } from '~/components/links/RichLink'
 import { Container } from '~/components/ui/Container'
 
-const title = '更新日志'
-const description = '记录网站的成长历程与每一次的改进优化，见证产品的不断进化。'
+import AlipayQR from './alipay-qr.jpg'
+import ThankYouLetterScreenshot1 from './Arc aagD26w9@2x.png'
+import ThankYouLetterScreenshot2 from './Arc ynleUdHy@2x.png'
+
+const title = 'AMA 一对一咨询'
+const description =
+  'Cali 提供一对一的咨询服务（Ask Me Anything）。我有前端开发、全栈开发、UI/UX 设计、创业经验、英语技能、美国留学与工作、内容创作等经验，可以为你解答相关的问题，我也支持纯英语沟通。'
 
 export const metadata = {
   title,
@@ -26,114 +26,105 @@ export const metadata = {
   },
 }
 
-const updates = [
-  {
-    version: '2.1.0',
-    date: '2024-03-25',
-    title: '全新设计与性能优化',
-    image: '/images/v2.1-preview.webp',
-    highlights: [
-      '重新设计了整体用户界面，提供更现代化的视觉体验',
-      '优化了页面加载性能，提升了首屏加载速度',
-      '增强了移动端适配，提供更好的响应式体验',
-      '改进了深色模式的视觉效果',
-      '优化了数据库查询性能',
-      '更新了依赖包到最新版本',
-      '增强了系统安全性',
-    ],
-  },
-  {
-    version: '2.0.0',
-    date: '2024-03-13',
-    title: '技术栈升级',
-    image: '/images/v2.0-preview.webp',
-    highlights: [
-      '升级 Next.js 到 14.1 版本',
-      '更新 Sanity 到最新版本',
-      '优化了数据库结构',
-      '改进了后台管理界面',
-      '提升了整体系统稳定性',
-    ],
-  },
-  {
-    version: '1.1.0',
-    date: '2024-03-10',
-    title: '数据库迁移与优化',
-    image: '/images/v1.1-preview.webp',
-    highlights: [
-      '完成数据库迁移工作',
-      '优化了数据存储结构',
-      '提升了查询性能',
-      '增强了数据安全性',
-    ],
-  },
-]
-
-export default function ChangelogPage() {
+export default function AskMeAnythingPage() {
   return (
     <Container className="mt-16 sm:mt-24">
       <header className="max-w-2xl">
         <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-          更新日志
+          Ask Me Anything / 一对一咨询
         </h1>
         <p className="my-6 text-base text-zinc-600 dark:text-zinc-400">
           <Balancer>{description}</Balancer>
         </p>
       </header>
 
-      <div className="mt-16 space-y-12">
-        {updates.map((update, index) => (
-          <motion.div
-            key={update.version}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+      <article className="prose dark:prose-invert">
+        <h2>咨询内容</h2>
+        <p>我可以为你解答以下相关的问题：</p>
+        <ul>
+          <li>
+            <b>前端/全栈开发</b>
+            ：工作难找，或是寻求职场建议？想提升自己的工程师水平？还是想锐评
+            React vs Vue？
+          </li>
+          <li>
+            <b>UI/UX 设计</b>：不知道如何开始学习设计？想提升自己的设计水平？
+          </li>
+          <li>
+            <b>创业经验</b>
+            ：我是
+            <RichLink href="https://zolplay.com" target="_blank">
+              佐玩
+            </RichLink>
+            的创始人，现在带领着团队帮助游戏开发者打造协同平台。
+          </li>
+          <li>
+            <b>英语技能</b>：英语能力不足，想提高自己的英语水平？想跟 Cali
+            一样可以{' '}
+            <RichLink
+              href="https://y.qq.com/n/ryqq/songDetail/003c0O9B3firAU"
+              favicon={false}
+              target="_blank"
+            >
+              英文说唱
+            </RichLink>
+            ？
+          </li>
+          <li>
+            <b>其他</b>
+            ：我的美国留学与工作经验，内容创作，音乐制作经验等等都可以帮助你解答一些其他的问题。
+          </li>
+        </ul>
+        <p>
+          你也可以全程跟我用英语聊，我也非常乐意，因为可能我的英语比中文说的要好。。。
+        </p>
+
+        <h2>定价</h2>
+        <p>我的一对一咨询的价格为：</p>
+        <ul>
+          <li>
+            <strong>¥150 - 30分钟</strong>
+          </li>
+          <li>
+            <strong>¥300 - 60分钟</strong>
+          </li>
+        </ul>
+
+        <p className="flex justify-center md:block md:justify-start">
+          <span className="inline-flex flex-col items-center">
+            <Image src={AlipayQR} alt="" className="w-44 dark:brightness-90" />
+            <span className="mt-1 text-sm font-medium">支付宝二维码</span>
+          </span>
+        </p>
+        <p>
+          一旦你完成支付，通过{' '}
+          <RichLink
+            href="https://cal.com/calicastle/ask-me-anything"
+            target="_blank"
           >
-            <Card className="overflow-hidden bg-white/50 shadow-sm dark:bg-zinc-800/50">
-              {update.image && (
-                <div className="relative h-64 w-full overflow-hidden sm:h-80">
-                  <Image
-                    src={update.image}
-                    alt={`Version ${update.version} preview`}
-                    fill
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-              )}
-              <div className="flex flex-col gap-2 p-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-                    v{update.version} - {update.title}
-                  </h2>
-                  <time className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {update.date}
-                  </time>
-                </div>
-                <ul className="mt-4 space-y-2">
-                  {update.highlights.map((highlight, i) => (
-                    <li
-                      key={i}
-                      className="flex items-start text-zinc-600 dark:text-zinc-300"
-                    >
-                      <span className="mr-2 mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-6 border-t border-zinc-100 pt-6 dark:border-zinc-700">
-                  <h3 className="mb-4 text-lg font-medium text-zinc-900 dark:text-zinc-100">
-                    用户反馈
-                  </h3>
-                  <CommentList version={update.version} />
-                  <div className="mt-4">
-                    <CommentForm version={update.version} />
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+            这个链接
+          </RichLink>
+          来跟我预约一个合适你的时间。
+        </p>
+
+        <h2>感谢信</h2>
+        <p>
+          下面两个截图摘选自两名 Twitter
+          朋友的私信，能够帮助到更多的人一直是我的使命：
+        </p>
+        <p className="grid items-center gap-4 lg:grid-cols-2">
+          <Image
+            src={ThankYouLetterScreenshot1}
+            alt=""
+            className="max-w-full"
+          />
+          <Image
+            src={ThankYouLetterScreenshot2}
+            alt=""
+            className="max-w-full"
+          />
+        </p>
+      </article>
     </Container>
   )
 }
