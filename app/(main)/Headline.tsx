@@ -75,7 +75,7 @@ export function Headline() {
         transition={{ type: 'spring', delay: 0.1 }}
       >
         <Balancer>
-          我是 Cali，
+          我是 ByteInnnetsX，
           <PeekabooLink href="https://zolplay.com">佐玩</PeekabooLink>
           创始人，目前带领着佐玩致力于创造一个充满创造力的工作环境，同时鼓励团队创造影响世界的产品。
           我热爱开发，设计，创新，享受生活，以及在未知领域中探索。
