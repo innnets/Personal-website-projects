@@ -84,6 +84,20 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <div className="text-sm text-zinc-400 dark:text-zinc-500">
+              <p>
+                &copy; {new Date().getFullYear()} Innnets. All rights reserved.
+                {' | '}
+                <a 
+                  href="https://beian.mps.gov.cn/#/query/webSearch?code=33010502012079" 
+                  rel="noreferrer" 
+                  target="_blank"
+                  className="hover:text-teal-500 transition-colors"
+                >
+                  浙公网安备33010502012079号
+                </a>
+              </p>
+            </div>
           </ThemeProvider>
         </body>
       </html>
