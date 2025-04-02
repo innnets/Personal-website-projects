@@ -62,48 +62,58 @@ const updateLogs: LogItem[] = [
 export default function ChangelogPage() {
   return (
     <Container className="mt-16 sm:mt-24">
-      <header className="max-w-2xl">
+      <header className="mb-12 max-w-2xl">
         <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
           更新日志
         </h1>
-        <p className="my-6 text-base text-zinc-600 dark:text-zinc-400">
+        <p className="mt-6 text-lg text-zinc-600 dark:text-zinc-400">
           {description}
         </p>
       </header>
 
-      <article className="prose dark:prose-invert">
-        <div className="mt-10 space-y-16">
-          {updateLogs.map((log, index) => (
-            <div key={index} className="relative">
-              <div className="absolute left-0 top-0 -ml-5 h-full w-0.5 bg-zinc-200 dark:bg-zinc-700" />
-              <div className="relative">
-                <div className="absolute -left-8 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
-                  <div className="h-2.5 w-2.5 rounded-full bg-zinc-500 dark:bg-zinc-400" />
-                </div>
-                <div className="pl-4">
-                  <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    {log.date} {log.version && <span className="text-lime-600 dark:text-lime-400">{log.version}</span>}
-                  </h3>
-                  <ul className="mt-4 space-y-2">
+      <div className="prose max-w-none dark:prose-invert">
+        <div className="relative py-6">
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-zinc-200 dark:bg-zinc-700" />
+          
+          <div className="space-y-12">
+            {updateLogs.map((log, index) => (
+              <div key={index} className="relative group">
+                <div className="absolute left-8 top-10 -ml-1.5 h-3 w-3 rounded-full border-2 border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-900 group-hover:border-lime-500 dark:group-hover:border-lime-400" />
+                
+                <div className="pl-20">
+                  <div className="flex flex-wrap items-baseline gap-x-2 group-hover:text-lime-600 dark:group-hover:text-lime-400">
+                    <time className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+                      {log.date}
+                    </time>
+                    {log.version && (
+                      <span className="text-lg font-medium text-lime-600 dark:text-lime-400">
+                        {log.version}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <ul className="mt-5 space-y-4">
                     {log.changes.map((change, changeIndex) => (
-                      <li key={changeIndex} className="flex items-start">
-                        <span className="mr-2 mt-1 block h-1.5 w-1.5 rounded-full bg-zinc-600 dark:bg-zinc-400" />
-                        <span>{change}</span>
+                      <li key={changeIndex} className="flex items-start gap-x-3">
+                        <span className="mt-2.5 h-1.5 w-1.5 flex-none rounded-full bg-zinc-600 dark:bg-zinc-400" />
+                        <span className="text-base text-zinc-700 dark:text-zinc-300">
+                          {change}
+                        </span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <div className="mt-16">
-          <p className="italic text-zinc-500 dark:text-zinc-400">
-            这个页面记录了网站的主要变更和优化，持续更新中...
+        <div className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-700">
+          <p className="text-center italic text-sm text-zinc-500 dark:text-zinc-400">
+            此页面记录网站的主要变更和优化，持续更新中...
           </p>
         </div>
-      </article>
+      </div>
     </Container>
   )
 }
