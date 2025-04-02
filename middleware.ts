@@ -67,6 +67,7 @@ export default authMiddleware({
     '/rss',
     '/feed',
     '/ama',
+    '/changelog',
     '/api/webhook',
   ],
   ignoredRoutes: [
