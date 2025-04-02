@@ -1,8 +1,10 @@
 import { count, isNotNull } from 'drizzle-orm'
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
 import { CursorClickIcon, UsersIcon } from '~/assets'
+import beianIcon from '~/assets/beian.png'
 import { PeekabooLink } from '~/components/links/PeekabooLink'
 import { Container } from '~/components/ui/Container'
 import { kvKeys } from '~/config/kv'
@@ -132,6 +134,21 @@ export async function Footer() {
               <React.Suspense>
                 <LastVisitorInfo />
               </React.Suspense>
+            </div>
+            <div className="mt-4 flex items-center justify-center">
+              <a 
+                href="https://beian.mps.gov.cn/#/query/webSearch?code=33010502012079" 
+                rel="noreferrer" 
+                target="_blank"
+                className="flex items-center text-xs text-zinc-500 transition hover:text-lime-500 dark:text-zinc-400 dark:hover:text-lime-400"
+              >
+                <Image 
+                  src={beianIcon} 
+                  alt="备案图标" 
+                  className="mr-1 h-4 w-4" 
+                />
+                浙公网安备33010502012079号
+              </a>
             </div>
           </Container.Inner>
         </div>
