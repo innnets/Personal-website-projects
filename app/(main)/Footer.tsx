@@ -115,21 +115,12 @@ export async function Footer() {
               <Newsletter subCount={`${subs?.subCount ?? '0'}`} />
             </div>
             <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-              <div className="flex flex-col items-center sm:items-start gap-2">
-                <p className="text-sm text-zinc-500/80 dark:text-zinc-400/80">
-                  &copy; {new Date().getFullYear()} Innnets. All rights reserved.
-                </p>
-                <p className="text-sm text-zinc-500/80 dark:text-zinc-400/80">
-                  <a 
-                    href="https://beian.mps.gov.cn/#/query/webSearch?code=33010502012079" 
-                    rel="noreferrer" 
-                    target="_blank"
-                    className="transition hover:text-lime-500 dark:hover:text-lime-400"
-                  >
-                    浙公网安备33010502012079号
-                  </a>
-                </p>
-              </div>
+              <p className="text-sm text-zinc-500/80 dark:text-zinc-400/80">
+                &copy; {new Date().getFullYear()} Cali Castle. 网站已开源：
+                <PeekabooLink href="https://github.com/CaliCastle/cali.so">
+                  GitHub
+                </PeekabooLink>
+              </p>
               <Links />
             </div>
           </Container.Inner>
