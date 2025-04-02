@@ -127,28 +127,39 @@ export async function Footer() {
             </div>
           </Container.Inner>
           <Container.Inner className="mt-6">
-            <div className="flex flex-col items-center justify-start gap-2 sm:flex-row">
-              <React.Suspense>
-                <TotalPageViews />
-              </React.Suspense>
-              <React.Suspense>
-                <LastVisitorInfo />
-              </React.Suspense>
-            </div>
-            <div className="mt-4 flex items-center justify-center">
-              <a 
-                href="https://beian.mps.gov.cn/#/query/webSearch?code=33010502012079" 
-                rel="noreferrer" 
-                target="_blank"
-                className="flex items-center text-xs text-zinc-500 transition hover:text-lime-500 dark:text-zinc-400 dark:hover:text-lime-400"
-              >
-                <Image 
-                  src={beianIcon} 
-                  alt="备案图标" 
-                  className="mr-1 h-4 w-4" 
-                />
-                浙公网安备33010502012079号
-              </a>
+            <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:justify-between">
+              <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-start">
+                <React.Suspense>
+                  <TotalPageViews />
+                </React.Suspense>
+                <React.Suspense>
+                  <LastVisitorInfo />
+                </React.Suspense>
+              </div>
+              <div className="flex flex-col items-center gap-2 sm:flex-row">
+                <a 
+                  href="http://beian.miit.gov.cn/" 
+                  rel="noreferrer" 
+                  target="_blank"
+                  className="flex items-center text-xs text-zinc-500 transition hover:text-lime-500 dark:text-zinc-400 dark:hover:text-lime-400"
+                >
+                  浙ICP备2024129259号-1
+                </a>
+                <span className="hidden text-xs text-zinc-400 sm:inline">|</span>
+                <a 
+                  href="https://beian.mps.gov.cn/#/query/webSearch?code=33010502012079" 
+                  rel="noreferrer" 
+                  target="_blank"
+                  className="flex items-center text-xs text-zinc-500 transition hover:text-lime-500 dark:text-zinc-400 dark:hover:text-lime-400"
+                >
+                  <Image 
+                    src={beianIcon} 
+                    alt="备案图标" 
+                    className="mr-1 h-4 w-4" 
+                  />
+                  浙公网安备33010502012079号
+                </a>
+              </div>
             </div>
           </Container.Inner>
         </div>
