@@ -48,9 +48,9 @@ export async function POST(req: NextRequest) {
 
     if (env.NODE_ENV === 'production') {
       await resend.emails.send({
-        from: `"ByteInnnetsX" <newsletter@${env.RESEND_DOMAIN}>`,
+        from: emailConfig.from,
         to: parsed.email,
-        subject: '来自 ByteInnnetsX 的订阅确认',
+        subject: '来自 Cali 的订阅确认',
         react: ConfirmSubscriptionEmail({
           link: url(`confirm/${token}`).href,
         }),
