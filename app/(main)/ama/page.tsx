@@ -1,16 +1,10 @@
-import Image from 'next/image'
-import Balancer from 'react-wrap-balancer'
+import React from 'react'
 
 import { RichLink } from '~/components/links/RichLink'
 import { Container } from '~/components/ui/Container'
 
-import AlipayQR from './alipay-qr.jpg'
-import ThankYouLetterScreenshot1 from './Arc aagD26w9@2x.png'
-import ThankYouLetterScreenshot2 from './Arc ynleUdHy@2x.png'
-
-const title = 'AMA 一对一咨询'
-const description =
-  'Cali 提供一对一的咨询服务（Ask Me Anything）。我有前端开发、全栈开发、UI/UX 设计、创业经验、英语技能、美国留学与工作、内容创作等经验，可以为你解答相关的问题，我也支持纯英语沟通。'
+const title = '更新日志'
+const description = '记录网站优化和功能更新的变更历史'
 
 export const metadata = {
   title,
@@ -26,104 +20,89 @@ export const metadata = {
   },
 }
 
-export default function AskMeAnythingPage() {
+interface LogItem {
+  date: string
+  version?: string
+  changes: string[]
+}
+
+const updateLogs: LogItem[] = [
+  {
+    date: '2025-02-25',
+    version: 'v1.2.0',
+    changes: [
+      '增加网站底部备案信息，包括工信部ICP备案和公安备案',
+      '优化页脚布局，改善移动端和桌面端的显示效果',
+      '更新环境变量配置，提高安全性',
+      '优化Docker构建流程，解决ESLint配置问题'
+    ]
+  },
+  {
+    date: '2025-02-20',
+    version: 'v1.1.5',
+    changes: [
+      '迁移数据库从第三方服务到自托管PostgreSQL',
+      '优化数据库连接配置，增强安全性',
+      '修复管理后台认证问题，优化管理体验',
+      '增加自动备份功能，确保数据安全'
+    ]
+  },
+  {
+    date: '2025-02-15',
+    version: 'v1.1.0',
+    changes: [
+      '从原项目Fork并进行个性化定制',
+      '更新网站主题和品牌标识',
+      '配置GitHub Actions实现自动化部署',
+      '优化移动端响应式设计'
+    ]
+  }
+]
+
+export default function ChangelogPage() {
   return (
     <Container className="mt-16 sm:mt-24">
       <header className="max-w-2xl">
         <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-          Ask Me Anything / 一对一咨询
+          更新日志
         </h1>
         <p className="my-6 text-base text-zinc-600 dark:text-zinc-400">
-          <Balancer>{description}</Balancer>
+          {description}
         </p>
       </header>
 
       <article className="prose dark:prose-invert">
-        <h2>咨询内容</h2>
-        <p>我可以为你解答以下相关的问题：</p>
-        <ul>
-          <li>
-            <b>前端/全栈开发</b>
-            ：工作难找，或是寻求职场建议？想提升自己的工程师水平？还是想锐评
-            React vs Vue？
-          </li>
-          <li>
-            <b>UI/UX 设计</b>：不知道如何开始学习设计？想提升自己的设计水平？
-          </li>
-          <li>
-            <b>创业经验</b>
-            ：我是
-            <RichLink href="https://zolplay.com" target="_blank">
-              佐玩
-            </RichLink>
-            的创始人，现在带领着团队帮助游戏开发者打造协同平台。
-          </li>
-          <li>
-            <b>英语技能</b>：英语能力不足，想提高自己的英语水平？想跟 Cali
-            一样可以{' '}
-            <RichLink
-              href="https://y.qq.com/n/ryqq/songDetail/003c0O9B3firAU"
-              favicon={false}
-              target="_blank"
-            >
-              英文说唱
-            </RichLink>
-            ？
-          </li>
-          <li>
-            <b>其他</b>
-            ：我的美国留学与工作经验，内容创作，音乐制作经验等等都可以帮助你解答一些其他的问题。
-          </li>
-        </ul>
-        <p>
-          你也可以全程跟我用英语聊，我也非常乐意，因为可能我的英语比中文说的要好。。。
-        </p>
+        <div className="mt-10 space-y-16">
+          {updateLogs.map((log, index) => (
+            <div key={index} className="relative">
+              <div className="absolute left-0 top-0 -ml-5 h-full w-0.5 bg-zinc-200 dark:bg-zinc-700" />
+              <div className="relative">
+                <div className="absolute -left-8 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+                  <div className="h-2.5 w-2.5 rounded-full bg-zinc-500 dark:bg-zinc-400" />
+                </div>
+                <div className="pl-4">
+                  <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    {log.date} {log.version && <span className="text-lime-600 dark:text-lime-400">{log.version}</span>}
+                  </h3>
+                  <ul className="mt-4 space-y-2">
+                    {log.changes.map((change, changeIndex) => (
+                      <li key={changeIndex} className="flex items-start">
+                        <span className="mr-2 mt-1 block h-1.5 w-1.5 rounded-full bg-zinc-600 dark:bg-zinc-400" />
+                        <span>{change}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-        <h2>定价</h2>
-        <p>我的一对一咨询的价格为：</p>
-        <ul>
-          <li>
-            <strong>¥150 - 30分钟</strong>
-          </li>
-          <li>
-            <strong>¥300 - 60分钟</strong>
-          </li>
-        </ul>
-
-        <p className="flex justify-center md:block md:justify-start">
-          <span className="inline-flex flex-col items-center">
-            <Image src={AlipayQR} alt="" className="w-44 dark:brightness-90" />
-            <span className="mt-1 text-sm font-medium">支付宝二维码</span>
-          </span>
-        </p>
-        <p>
-          一旦你完成支付，通过{' '}
-          <RichLink
-            href="https://cal.com/calicastle/ask-me-anything"
-            target="_blank"
-          >
-            这个链接
-          </RichLink>
-          来跟我预约一个合适你的时间。
-        </p>
-
-        <h2>感谢信</h2>
-        <p>
-          下面两个截图摘选自两名 Twitter
-          朋友的私信，能够帮助到更多的人一直是我的使命：
-        </p>
-        <p className="grid items-center gap-4 lg:grid-cols-2">
-          <Image
-            src={ThankYouLetterScreenshot1}
-            alt=""
-            className="max-w-full"
-          />
-          <Image
-            src={ThankYouLetterScreenshot2}
-            alt=""
-            className="max-w-full"
-          />
-        </p>
+        <div className="mt-16">
+          <p className="italic text-zinc-500 dark:text-zinc-400">
+            这个页面记录了网站的主要变更和优化，持续更新中...
+          </p>
+        </div>
       </article>
     </Container>
   )
