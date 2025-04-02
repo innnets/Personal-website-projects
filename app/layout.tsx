@@ -12,13 +12,13 @@ import { sansFont } from '~/lib/font'
 import { seo } from '~/lib/seo'
 
 export const metadata: Metadata = {
-  metadataBase: seo.url,
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: {
-    template: '%s | Cali Castle',
     default: seo.title,
+    template: '%s | ByteInnnetsX',
   },
   description: seo.description,
-  keywords: 'Cali,Cali Castle,郭晓楠,佐玩,创始人,CEO,开发者,设计师,细节控,创新',
+  keywords: 'ByteInnnetsX,innnets,开发者,设计师,细节控,创新',
   manifest: '/site.webmanifest',
   robots: {
     index: true,
@@ -34,10 +34,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: {
       default: seo.title,
-      template: '%s | Cali Castle',
+      template: '%s | ByteInnnetsX',
     },
     description: seo.description,
-    siteName: 'Cali Castle',
+    siteName: 'ByteInnnetsX',
     locale: 'zh_CN',
     type: 'website',
     url: 'https://cali.so',

@@ -5,9 +5,11 @@ export default function BlockedPage() {
         我已禁止你的访问权限
       </h1>
       <span className="text-sm">
-        如果你认为你不应该被禁，请联系我的邮箱{' '}
-        <a href="mailto:hi@cali.so" className="font-bold underline">
-          hi@cali.so
+        我们检测到您的 IP 地址在我们的封禁名单中。
+        <br />
+        如有疑问请联系{' '}
+        <a href="mailto:hi@innnets.com" className="font-bold underline">
+          hi@innnets.com
         </a>
       </span>
     </main>

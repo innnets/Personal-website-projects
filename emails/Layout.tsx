@@ -36,18 +36,18 @@ export default function Layout({
             <Hr className="mx-0 my-[20px] h-px w-full bg-zinc-100" />
             <Section>
               <Img
-                src={`${emailConfig.baseUrl}/icon.png`}
-                width="24"
-                height="24"
-                alt="Cali"
+                src={logo}
+                width={140}
+                height={47}
+                alt="ByteInnnetsX"
                 className="mx-auto my-0"
               />
-              <Text className="text-center">
+              <Text className="mt-3 text-[14px] leading-[24px] text-gray-500">
                 <Link
-                  href="https://cali.so"
+                  href="https://www.innnets.com"
                   className="text-zinc-700 underline"
                 >
-                  <strong>Cali Castle</strong>
+                  <strong>ByteInnnetsX</strong>
                 </Link>
                 <br />
                 开发者、设计师、细节控、创始人

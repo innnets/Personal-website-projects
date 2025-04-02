@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Balancer from 'react-wrap-balancer'
+import Link from 'next/link'
 
 import { SparkleIcon, UserSecurityIcon } from '~/assets'
 import { PeekabooLink } from '~/components/links/PeekabooLink'
@@ -80,10 +81,18 @@ export function Headline() {
         }}
       >
         <Balancer>
-          我是 Cali，
-          <PeekabooLink href="https://zolplay.com">佐玩</PeekabooLink>
-          创始人，目前带领着佐玩致力于创造一个充满创造力的工作环境，同时鼓励团队创造影响世界的产品。
-          我热爱开发，设计，创新，享受生活，以及在未知领域中探索。
+          我是 ByteInnnetsX，
+          <span className="hidden sm:inline">
+            一名开发者、设计师、细节控，同时也是{' '}
+            <Link
+              href="https://zolplay.com"
+              className="font-medium text-lime-600 transition hover:text-lime-700 dark:text-lime-400 dark:hover:text-lime-300"
+            >
+              佐玩
+            </Link>{' '}
+            创始人
+          </span>
+          <span className="sm:hidden">开发者、设计师、细节控</span>
         </Balancer>
       </motion.p>
       <motion.div
