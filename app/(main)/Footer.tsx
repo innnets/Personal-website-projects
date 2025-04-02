@@ -118,7 +118,7 @@ export async function Footer() {
             </div>
             <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
               <p className="text-sm text-zinc-500/80 dark:text-zinc-400/80">
-                &copy; {new Date().getFullYear()} Innnets. 云小站：
+                &copy; {new Date().getFullYear()} ByteInnnetsX. 云小站：
                 <PeekabooLink href="https://www.aliyun.com/minisite/goods?userCode=8g7phepa">
                   阿里云
                 </PeekabooLink>

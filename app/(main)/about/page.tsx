@@ -20,7 +20,7 @@ export default function AboutPage() {
         </div>
         <div className="lg:order-first lg:row-span-2">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Hey，我是 innnets 👋
+            Hey，我是 ByteInnnetsX 👋
           </h1>
           <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
             <p>
@@ -32,7 +32,7 @@ export default function AboutPage() {
             <ul className="list-inside space-y-3 pl-5">
               <li className="flex items-baseline">
                 <span className="mr-2 text-xl">🔧</span>
-                <span><strong>系统运维</strong> - 分享服务器管理、Docker容器化、自动化部署等实用技巧</span>
+                <span><strong>系统运维</strong> - 分享服务器管理、Docker容器化、自动化部署</span>
               </li>
               <li className="flex items-baseline">
                 <span className="mr-2 text-xl">🚀</span>
