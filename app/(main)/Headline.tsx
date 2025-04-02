@@ -109,7 +109,7 @@ export function Headline() {
           platform="bilibili"
         />
         <SocialLink
-          href="https://cali.so/github"
+          href="https://github.com/innnets"
           aria-label="我的 GitHub"
           platform="github"
         />
@@ -120,7 +120,7 @@ export function Headline() {
         />
         <SocialLink href="/feed.xml" platform="rss" aria-label="RSS 订阅" />
         <SocialLink
-          href="mailto:hi@cali.so"
+          href="mailto:hi@innnets.com"
           aria-label="我的邮箱"
           platform="mail"
         />
