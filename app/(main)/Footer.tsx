@@ -48,9 +48,16 @@ function Links() {
 
 async function TotalPageViews() {
   let views: number
-  if (env.VERCEL_ENV === 'production') {
-    views = await redis.incr(kvKeys.totalPageViews)
-  } else {
+  try {
+    if (env.VERCEL_ENV === 'production') {
+      console.log('正在更新总浏览量...');
+      views = await redis.incr(kvKeys.totalPageViews);
+      console.log(`更新后的总浏览量: ${views}`);
+    } else {
+      views = 345678
+    }
+  } catch (error) {
+    console.error('更新总浏览量时出错:', error);
     views = 345678
   }
 
@@ -72,19 +79,30 @@ type VisitorGeolocation = {
 }
 async function LastVisitorInfo() {
   let lastVisitor: VisitorGeolocation | undefined = undefined
-  if (env.VERCEL_ENV === 'production') {
-    const [lv, cv] = await redis.mget<VisitorGeolocation[]>(
-      kvKeys.lastVisitor,
-      kvKeys.currentVisitor
-    )
-    lastVisitor = lv
-    await redis.set(kvKeys.lastVisitor, cv)
+  try {
+    if (env.VERCEL_ENV === 'production') {
+      console.log('正在获取访客信息...');
+      const [lv, cv] = await redis.mget<VisitorGeolocation[]>(
+        kvKeys.lastVisitor,
+        kvKeys.currentVisitor
+      );
+      console.log('上次访客信息:', lv);
+      console.log('当前访客信息:', cv);
+      
+      lastVisitor = lv;
+      if (cv) {
+        await redis.set(kvKeys.lastVisitor, cv);
+        console.log('已更新最近访客信息');
+      }
+    }
+  } catch (error) {
+    console.error('获取访客信息时出错:', error);
   }
 
   if (!lastVisitor) {
     lastVisitor = {
-      country: 'US',
-      flag: '🇺🇸',
+      country: 'CN',
+      flag: '🇨🇳',
     }
   }
 
