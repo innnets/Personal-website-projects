@@ -27,7 +27,7 @@ function Designer() {
         <span className="absolute -bottom-[3.5px] -left-[3.5px] size-1.5 border border-lime-700 bg-zinc-50 dark:border-lime-400" />
         <span className="absolute -right-[3.5px] -top-[3.5px] size-1.5 border border-lime-700 bg-zinc-50 dark:border-lime-400" />
       </span>
-      设计师
+      架构师
     </span>
   )
 }
@@ -36,7 +36,7 @@ function OCD() {
   return (
     <span className="group inline-flex items-center">
       <SparkleIcon className="mr-1 inline-flex transform-gpu transition-transform duration-500 group-hover:rotate-180" />
-      <span>细节控</span>
+      <span>极客派</span>
     </span>
   )
 }
@@ -45,7 +45,7 @@ function Founder() {
   return (
     <span className="group inline-flex items-center">
       <UserSecurityIcon className="mr-1 inline-flex group-hover:fill-zinc-600/20 dark:group-hover:fill-zinc-200/20" />
-      <span>创始人</span>
+      <span>云推官</span>
     </span>
   )
 }
@@ -77,8 +77,7 @@ export function Headline() {
         <Balancer>
           我是 ByteInnnetsX，
           <PeekabooLink href="https://www.aliyun.com/minisite/goods?userCode=8g7phepa">阿里云</PeekabooLink>
-          云大使，目前带领着佐玩致力于创造一个充满创造力的工作环境，同时鼓励团队创造影响世界的产品。
-          我热爱开发，设计，创新，享受生活，以及在未知领域中探索。
+          云大使，目前在某科技公司做系统运维工程师，努力维护系统的平稳运行，同时推动技术方案的优化。我喜欢 coding、调试、创新，享受生活，并在问题解决中探索可能性。
         </Balancer>
       </motion.p>
       <motion.div
