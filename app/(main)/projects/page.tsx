@@ -5,7 +5,7 @@ import { Container } from '~/components/ui/Container'
 
 const title = '我的项目'
 const description =
-  '多年来，我一直在做各种各样的小项目，这里就是我筛选出来我觉得还不错的项目合集，也是我在技术领域中尝试和探索的最好见证。'
+  '多年来，我持续关注并筛选各类优秀项目，涵盖开源佳作、实验性探索以及趣味性应用。以下是我精心挑选的推荐项目合集，它们不仅是我技术视野的缩影，更是我在系统运维领域中不断学习与进取的有力见证。'
 export const metadata = {
   title,
   description,
