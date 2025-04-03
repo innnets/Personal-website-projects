@@ -29,7 +29,7 @@ export default function ProjectsPage() {
         </h1>
         <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
           多年来，我持续关注并筛选各类优秀项目，有<b>开源</b>的，有<b>实验性探索</b>
-          的，也有 <b>趣味性应用</b>
+          的，也有<b>趣味性应用</b>
           的，以下是我精心挑选的推荐项目合集，它们不仅是我技术视野的缩影，更是我在系统运维领域中不断学习与进取的有力见证。
         </p>
       </header>
