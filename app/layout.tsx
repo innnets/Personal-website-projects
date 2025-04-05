@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     siteName: 'ByteInnnetsX',
     locale: 'zh_CN',
     type: 'website',
-    url: 'https://innnets.me',
+    url: 'https://innnets.com',
   },
   twitter: {
     site: '@innnets',

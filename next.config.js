@@ -5,12 +5,12 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'innnets.me',
+        hostname: 'innnets.com',
       },
       // 如果您还有其他域名，按照相同格式添加
       {
         protocol: 'https',
-        hostname: '*.innnets.me',  // 支持所有子域名
+        hostname: '*.innnets.com',  // 支持所有子域名
       },
       // Sanity 图片域名（如果需要）
       {
