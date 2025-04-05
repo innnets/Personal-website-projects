@@ -64,4 +64,4 @@ jobs:
 
       - name: 触发 Dokploy 部署
         run: |
-          curl -X POST https://app.innnets.me/api/deploy/3ekv_j2EfT3r6ZnA6MRFV 
+          curl -X POST https://app.innnets.com/api/deploy/QwfnGJY7BC4TsWKWmvGkW 
